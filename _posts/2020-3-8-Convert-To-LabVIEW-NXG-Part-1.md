@@ -113,7 +113,7 @@ While this property node nitpick doesn't affect functionality, all of these extr
 
 ## The Event Structure
 
-The event structure provided a few interesting quirks. Dynamic registration for control references is out, so the once simple dynamic event registration of an array of UI control references became a tedious effort in configuring 50+ event sources across several event cases. Also one can't register a Mouse Down? filter event for different control types, or even *same* control types with different data types. So there's a bit of [WET](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself#DRY_vs_WET_solutions) going on when configuring events.
+The event structure provided a few interesting quirks. Dynamic registration for control references is out, so the once simple registration of an array of UI control references became a tedious effort in manually configuring 50+ event sources across several event cases. Also one can't register a Mouse Down? filter event for different control types, or even the *same* control types with different data types. So there's a bit of [WET](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself#DRY_vs_WET_solutions) going on when configuring events.
 
 [![The NXG event configuration dialog.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Event-Config.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Event-Config.png)
 
