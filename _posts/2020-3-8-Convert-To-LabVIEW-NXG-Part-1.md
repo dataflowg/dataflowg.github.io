@@ -123,7 +123,7 @@ What's also puzzling is the ability to add events to the event structure from th
 
 It's mentioned multiple times in the manuals, but any calls to 32-bit DLLs will not work under LabVIEW NXG as it's 64-bit only. Not a problem in this project, as the MP3 loading DLL can to recompiled to 64-bit. It may be a problem if a hardware driver or library is only available as a 32-bit DLL. In the interests of getting Dataflow DJ running, MP3 loading was disabled and only WAV loading (via the built-in sound library) was used.
 
-## Where In The World Are Those LLB VIs?
+## O LLB VIs, Where Art Thou?
 
 There are a few VIs from lvsound2.llb which are not visible in the LabVIEW Sound palette, but used by Dataflow DJ to query device information. Unfortunately these VIs are no longer included with NXG (though the underlying functions are there in lvsound2.dll). This is where the Code Conversion Utility's Convert files referenced from vi.lib option is handy, porting over VIs which don't exist in NXG.
 
