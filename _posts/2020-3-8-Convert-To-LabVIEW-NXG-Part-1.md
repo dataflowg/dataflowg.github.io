@@ -59,13 +59,17 @@ By the way you can view circular dependencies in LabVIEW using the VI Hierarchy 
 
 With that erroneous VI fixed, all project files are now present and accounted for. The next step I took was fixing issues highlighted in the conversion report, which are almost all some variant of *this feature is not supported in this version of LabVIEW NXG*. I don't want to provide detail on how every entry was fixed, but will address some of the standout issues and workarounds required.
 
+Before diving in, I was curious to see how well the main interface converted. It's not terrible! (though suffers a [knob shrinkage](https://twitter.com/Dataflow_G/status/1060542351528013824) problem)
+
+[![The initial DJ Interface UI conversion.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-DJ-Interface.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-DJ-Interface.png)
+
 # Make It Work
 
-Ths process of fixing the conversion errors was slow to start, as I was still learning what LabVIEW NXG 4.0 was and wasn't capable of. Drag and drop? Nope. Dynamic events from control references? Nope. Execution systems? Nope.
+The process of fixing the conversion errors was slow to start, as I was still learning what LabVIEW NXG 4.0 was and wasn't capable of. Drag and drop? Nope. Dynamic events from control references? Nope. Execution systems? Nope.
 
-Then came the more subtle differences I wasn't expecting. Unbundle caption text from a control reference? That needs two property nodes now. Bundle a cluster element on a class wire? That needs three property nodes. Hang on, no *Value* property!? What was going on?
+Then came the more subtle differences I wasn't expecting. Unbundle caption text from a control reference? That needs two property nodes now. Bundle a cluster element on a class wire? That needs three property nodes. Why is the knob control bounding box so much bigger than the graphic? Hang on, no *Value* property!? What was going on?
 
-## All References Are Equal, But Some References Are More Equal Than Others.
+## All References Are Equal, But Some References Are More Equal Than Others
 
 One of these reference types is a NumericTextBox. The other is a NumericTextBox. See the difference? Maybe the context help gives a clue? What about the item tab on the configuration pane? Everything indicates they're both a NumericTextBox. They must be the same then! So why does only one of them have a subset of properties?
 
