@@ -131,13 +131,13 @@ It's mentioned multiple times in the manuals, but any calls to 32-bit DLLs will 
 
 There are a few VIs from lvsound2.llb which are not visible in the LabVIEW Sound palette, but used by Dataflow DJ to query device information. Unfortunately these VIs are no longer included with NXG (though the underlying functions are there in lvsound2.dll). This is where the Code Conversion Utility's Convert files referenced from vi.lib option is handy, porting over VIs which don't exist in NXG.
 
-I gave it a quick go and it works as advertized, though there's one major pitfall - if you don't know the password for protected VIs in vi.lib, they won't convert. So if you're relying on some hidden vi.lib gems, make sure you know the password (or that they aren't password protected).
+I gave it a quick go and it works as advertised, though there's one major pitfall - if you don't know the password for protected VIs in vi.lib, they won't convert. So if you're relying on some hidden vi.lib gems, make sure you know the password (or that they aren't password protected).
 
 In the end I didn't use this conversion option, and just assumed a single audio device would be used (so no headphone cueing). Looking back I don't know if trying to output to two devices simulatenously would've been too much of a performance issue anyway...
 
 ## Subpanels vs. Panel Containers
 
-I was really hoping the Code Conversion Utility would perform a 1:1 replacement of subpanels with panel containers, but that wasn't the case. No matter, it should be simple enough to replace them manually...
+I was hoping the Code Conversion Utility would perform a 1:1 replacement of subpanels with panel containers, but that wasn't the case. No matter, it should be simple enough to replace them manually...
 
 ### Is Your VI Running?
 
