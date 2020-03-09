@@ -15,7 +15,7 @@ The plan was to convert the first release of [Dataflow DJ](https://github.com/da
 
 The knew the UI probably wouldn't port nicely, so the focus was on achieving basic functionality. I did briefly consider trying to port the latest Dataflow DJ release, but it's split across multiple projects, with multiple static and dynamic PPLs. That was painful enough to implement in LabVIEW - I wasn't even going to attempt it in NXG!
 
-![Version 0.1 of Dataflow DJ.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png)
+[![Version 0.1 of Dataflow DJ.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png)
 
 Here's a quick look at the project under LabVIEW 2019. A few classes, a few libraries, some loose VIs and controls, and a top level VI. It's all pure LabVIEW, save for some DLL calls to load MP3s. The project is self contained, with no dependencies beyond vi.lib.
 
@@ -49,7 +49,7 @@ After a slow process of elimination, the root cause of the conversion error is d
 
 ## Code Conversion Successes
 
-One issue the conversion utility dealth with was circular dependencies between libraries. I knew Dataflow DJ had some circular dependencies (VIs using typedefs from other libraries, and vice versa). The utility shifted the offending VIs and controls to the new Merged and MergedDependencies libraries to fix the issue. Kudos.
+One issue the conversion utility dealt with was circular dependencies between libraries. I knew Dataflow DJ had some circular dependencies (VIs using typedefs from other libraries, and vice versa). The utility shifted the offending VIs and controls to the new Merged and MergedDependencies libraries to fix the issue. Kudos.
 
 By the way you can view circular dependencies in LabVIEW using the VI Hierarchy view. The links appear as curved wires connecting the offending VIs/libraries.
 
@@ -89,7 +89,7 @@ In Dataflow DJ, references to every UI control are stored in a variant attribute
 
 With NXG, the ability to usefully write to the Value property in this way is gone, unless the control reference is converted to the exact UI control type *and* numeric representation. It might be possible to manage this with a map per control / value type or some other architectural redesign, but that was beyond the scope of this experiment.
 
-I did manage to find a workaround in the form of *Set Control Value*, which writes a variant input to a named control, no reference type necessary. I don't know if this is the expected way to do things in NXG, or just happens to be the one which works. It's also unclear if it's more or less performant, but it worked so I stuck with it.
+I did manage to find a workaround in the form of `Set Control Value`, which writes a variant input to a named control, no reference type necessary. I don't know if this is the expected way to do things in NXG, or just happens to be the one which works. It's also unclear if it's more or less performant, but it worked so I stuck with it.
 
 ## Diagram Flimflam
 
@@ -109,7 +109,7 @@ While this property node nitpick doesn't affect functionality, all of these extr
 
 ## The Event Structure
 
-The event structure provided a few interesting quirks. Dynamic registration for control references is out, so the dynamically registered array of all the UI control references became a tedious effort in configuring 50+ event sources across several event cases. Also one can't register a Mouse Down? filter event for different control types, or even *same* control types with different data types. So there's a bit of [WET](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) going on when configuring events.
+The event structure provided a few interesting quirks. Dynamic registration for control references is out, so the once simple dynamic event registration of an array of UI control references became a tedious effort in configuring 50+ event sources across several event cases. Also one can't register a Mouse Down? filter event for different control types, or even *same* control types with different data types. So there's a bit of [WET](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself#DRY_vs_WET_solutions) going on when configuring events.
 
 ![The NXG event configuration dialog.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Event-Config.png)
 
@@ -127,7 +127,7 @@ It's mentioned multiple times in the manuals, but any calls to 32-bit DLLs will 
 
 There are a few VIs from lvsound2.llb which are not visible in the LabVIEW Sound palette, but used by Dataflow DJ to query device information. Unfortunately these VIs are no longer included with NXG (though the underlying functions are there in lvsound2.dll). This is where the Code Conversion Utility's Convert files referenced from vi.lib option is handy, porting over VIs which don't exist in NXG.
 
-I gave it a quick go and it works as advertised, though there's one major pitfall - if you don't know the password for protected VIs in vi.lib, they won't convert. So if you're relying on some hidden vi.lib gems, make sure you know the password (or that they aren't password protected).
+I gave it a quick go and it works as advertized, though there's one major pitfall - if you don't know the password for protected VIs in vi.lib, they won't convert. So if you're relying on some hidden vi.lib gems, make sure you know the password (or that they aren't password protected).
 
 In the end I didn't use this conversion option, and just assumed a single audio device would be used (so no headphone cueing). Looking back I don't know if trying to output to two devices simulatenously would've been too much of a performance issue anyway...
 
