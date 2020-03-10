@@ -13,4 +13,5 @@ This blog covers the more technical aspects of my LabVIEW usage, leaving the lig
 ### Contact
 
 Twitter: [@Dataflow_G](https://twitter.com/dataflow_g)
+
 GitHub: [dataflowg](https://github.com/dataflowg)
