@@ -4,12 +4,13 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+![Another confused LabVIEW user.]({{ site.baseurl }}/images/travolta_bd.gif)
 
-### More Information
+### About This Blog
 
-A place to include any other types of information that you'd like to include about yourself.
+This blog covers the more technical aspects of my LabVIEW usage, leaving the light-hearted side of things to my Twitter account.
 
-### Contact me
+### Contact
 
-[email@domain.com](mailto:email@domain.com)
+Twitter: [@Dataflow_G](https://twitter.com/dataflow_g)
+GitHub: [dataflowg](https://github.com/dataflowg)
