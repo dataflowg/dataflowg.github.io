@@ -129,7 +129,7 @@ It's mentioned multiple times in the manuals, but any calls to 32-bit DLLs will 
 
 ## O LLB VIs, Where Art Thou?
 
-There are a few VIs from lvsound2.llb which are not visible in the LabVIEW Sound palette, but used by Dataflow DJ to query device information. Unfortunately these VIs are no longer included with NXG (though the underlying functions are there in lvsound2.dll). This is where the Code Conversion Utility's Convert files referenced from vi.lib option is handy, porting over VIs which don't exist in NXG.
+There are a few VIs from lvsound2.llb which are not visible in the LabVIEW Sound palette, but used by Dataflow DJ to query device information. Unfortunately these VIs are no longer included with NXG (though the underlying functions are there in lvsound2.dll). This is where the Code Conversion Utility's *Convert files referenced from vi.lib* option is handy, porting over VIs which don't exist in NXG.
 
 I gave it a quick go and it works as advertised, though there's one major pitfall - if you don't know the password for protected VIs in vi.lib, they won't convert. So if you're relying on some hidden vi.lib gems, make sure you know the password (or that they aren't password protected).
 
