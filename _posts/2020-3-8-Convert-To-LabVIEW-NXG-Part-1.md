@@ -13,7 +13,9 @@ The source code for the original [LabVIEW project](https://github.com/dataflowg/
 
 The plan was to convert the first release of [Dataflow DJ](https://github.com/dataflowg/dataflow-dj) to LabVIEW NXG 4.0, the goal being playback of two tracks with some simple mixing. This project was chosen as it's relatively small, though complex enough to test a range of features (subpanels, classes, sound output, DVRs, DLLs, signal processing, etc). It's also quite demanding in terms of CPU, so would be a good test of NXG's run-time performance.
 
-[![Version 0.1 of Dataflow DJ.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png)
+| [![Version 0.1 of Dataflow DJ.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png) |
+|:--:|
+| *Version 0.1 of Dataflow DJ.* |
 
 The knew the UI probably wouldn't port nicely, so the focus was on achieving basic functionality. I did briefly consider trying to port the latest Dataflow DJ release, but it's split across multiple projects, with multiple static and dynamic PPLs. That was painful enough to implement in LabVIEW - I wasn't even going to attempt it in NXG!
 
@@ -27,21 +29,29 @@ Here's a quick look at the project under LabVIEW 2019. A few classes, a few libr
 
 First step is the Code Conversion Utility. There's some conversion options which can be set, but I stuck with the defaults for this experiment. The *Convert files referenced from vi.lib* option would've helped with some missing sound VIs that we'll run into later, but I wanted to see how far things went with the vanilla configuration.
 
-[![Code Conversion Utility settings page.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings.png)
+| [![Code Conversion Utility settings page.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings.png) |
+|:--:|
+| *Code Conversion Utility settings page.* |
 
 Interesting tooltip - is 5335 really the recommended connector pane size in NXG? New NXG VIs all have the 4224 pattern by default. Presumably this is the recommendation for instrument drivers, which would be a common conversion utility use case.
 
-[![Setting to enlarge VI connector panes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png)
+| [![Setting to enlarge VI connector panes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png) |
+|:--:|
+| *Setting to enlarge VI connector panes.* |
 
 The LabVIEW project file was added for conversion, and the preview indicated no errors or missing files. After a couple of minutes the conversion completed (without crashing or hanging I hasten to add, which was a problem in previous NXG versions). The converted project is then automatically opened, so it appears everything worked. Time to check the conversion report.
 
-[![Setting to enlarge VI connector panes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png)
+| [![Conversion Utility preview.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png) |
+|:--:|
+| *Conversion Utility preview.* |
 
 ## Code Conversion Errors
 
 It didn't take long to find the first show stopper - the main DJ Interface VI failed to convert. At this point it would've been nice if the conversion utility explicitly mentioned that files had failed to convert, rather than needing to dig into the conversion report. There are filters for looking through the conversion report, so finding failures is easy enough (but one still has to go looking). In this case the report highlights an EventDataNode, and a potentially corrupt VI. The VI certainly isn't corrupt, so it's probably the event structure or event registration node in that VI. Time to fire up LabVIEW.
 
-[![Conversion report output.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Conversion-Report.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Conversion-Report.png)
+| [![Conversion report output.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Conversion-Report.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Conversion-Report.png) |
+|:--:|
+| *Conversion report output.* |
 
 The process for narrowing down the fault was the usual 'remove code until works, then add it back until it breaks' approach. The first test removed the event structure entirely, then the project was reconverted. There were no conversion errors this time, so it seems the event structure or perhaps a particular event is at fault. The next test removed all of the registered events, but kept the structure and code in place, and this also converted without errors.
 
