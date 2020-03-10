@@ -23,7 +23,7 @@ Here's a quick look at the project under LabVIEW 2019. A few classes, a few libr
 
 # Code Conversion
 
-First step is the Code Conversion Utility. There's some conversion options which can be set, but I stuck with the defaults for this experiment. The vi.lib option would've helped with some missing sound VIs that we'll run into later, but I wanted to see how far things went with the vanilla configuration.
+First step is the Code Conversion Utility. There's some conversion options which can be set, but I stuck with the defaults for this experiment. The *Convert files referenced from vi.lib* option would've helped with some missing sound VIs that we'll run into later, but I wanted to see how far things went with the vanilla configuration.
 
 [![Code Conversion Utility settings page.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings.png)
 
