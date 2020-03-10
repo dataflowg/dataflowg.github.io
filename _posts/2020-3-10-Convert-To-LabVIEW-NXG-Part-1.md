@@ -161,6 +161,8 @@ And that event config dialog is too damned small. I can only view a few event so
 
 What's also puzzling is the ability to add events to the event structure from the Item tab on the right. Once added, how are they configured? Oh right, on the diagram with that tiny dialog. Why even add them on the Item pane?
 
+:bug: *Select an event structure. In the event case list in the item pane, click and drag any event to the top position for a fun surprise!*
+
 ## Bitness Bidness
 
 It's mentioned multiple times in the manuals, but any calls to 32-bit DLLs will not work under LabVIEW NXG as it's 64-bit only. Not a problem in this project, as the MP3 loading DLL can to recompiled to 64-bit. It may be a problem if a hardware driver or library is only available as a 32-bit DLL. In the interests of getting Dataflow DJ running, MP3 loading was disabled and only WAV loading (via the built-in sound library) was used.
