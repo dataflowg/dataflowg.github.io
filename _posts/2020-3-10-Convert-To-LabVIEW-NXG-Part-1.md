@@ -161,7 +161,7 @@ And that event config dialog is too damned small. I can only view a few event so
 
 What's also puzzling is the ability to add events to the event structure from the Item tab on the right. Once added, how are they configured? Oh right, on the diagram with that tiny dialog. Why even add them on the Item pane?
 
-:bug: *Select an event structure. In the event case list in the item pane, click and drag any event to the top position for a fun surprise!*
+*Bonus: Select an event structure. In the event case list in the item pane, click and drag any event to the top position for a fun surprise!*
 
 ## Bitness Bidness
 
