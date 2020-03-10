@@ -31,7 +31,7 @@ Interesting tooltip - is 5335 really the recommended connector pane size in NXG?
 
 [![Setting to enlarge VI connector panes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png)
 
-The LabVIEW project file was added for conversion, and the preview indicated no errors or missing files. After a couple of minutes the conversion completed (without crashing or hanging I hasten to add, which was a problem in previous NXG versions). The converted project is then automatically opened, so it looks everything worked. Time to check the conversion report.
+The LabVIEW project file was added for conversion, and the preview indicated no errors or missing files. After a couple of minutes the conversion completed (without crashing or hanging I hasten to add, which was a problem in previous NXG versions). The converted project is then automatically opened, so it appears everything worked. Time to check the conversion report.
 
 [![Setting to enlarge VI connector panes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png)
 
