@@ -17,7 +17,7 @@ The plan was to convert the first release of [Dataflow DJ](https://github.com/da
 |:--:|
 | *Version 0.1 of Dataflow DJ.* |
 
-The knew the UI probably wouldn't port nicely, so the focus was on achieving basic functionality. I did briefly consider trying to port the latest Dataflow DJ release, but it's split across multiple projects, with multiple static and dynamic PPLs. That was painful enough to implement in LabVIEW - I wasn't even going to attempt it in NXG!
+I knew the UI probably wouldn't port nicely, so the focus was on achieving basic functionality. I did briefly consider trying to port the latest Dataflow DJ release, but it's split across multiple projects, with multiple static and dynamic PPLs. That was painful enough to implement in LabVIEW - I wasn't even going to attempt it in NXG!
 
 Here's a quick look at the project under LabVIEW 2019. A few classes, a few libraries, some loose VIs and controls, and a top level VI. It's all pure LabVIEW, save for some DLL calls to load MP3s. The project is self contained, with no dependencies beyond vi.lib.
 
@@ -121,25 +121,29 @@ I did manage to find a workaround in the form of `Set Control Value`, which writ
 
 ## Diagram Flimflam
 
-OK, so not a lot of properties are supported. For those which do exist, multiple property nodes are somtimes required to access them. Take the contrived example below. If one wants to set all of the scale minimums of an intensity plot to 0 (leaving the maximum in place), this is the (only?) way it can be done in NXG. Every reference requires a property node, and in some cases clusters require their own property nodes too. The error wire at the end ensures the update order. The equivalent LabVIEW code is a single property node with three inputs - which is much more concise and readable too IMO.
+OK, so not a lot of properties are supported. For those which do exist, specifically reference types, multiple property nodes are required. Take the contrived example below. If one wants to set all of the scale minimums of an intensity plot to 0 (leaving the maximum untouched), this is the (only?) way it can be done in NXG. Every reference type requires a new property node to access its properties. The equivalent LabVIEW code is a single property node with three inputs - which is much more concise and readable IMO.
 
 | [![NXG references need a lot of property nodes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Intensity-Graph-Property-Compare.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Intensity-Graph-Property-Compare.png) |
 |:--:|
-| *NXG references need a lot of property nodes.* |
+| *NXG references need more property nodes.* |
 
-This property node requirement extends to class members. If a class contains a cluster, elements of that cluster can not be directly accessed from a property node on the class wire. Instead the cluster needs to be unbundled, and a second property node used to access the elements. Writing to cluster elements requires even more property nodes and wires.
+This property node requirement extends to class members. If a class contains a cluster, elements of that cluster can not be directly accessed from a property node on the class wire. Instead the cluster needs to be unbundled, and a second property node used to access the elements. In this example the Channel class contains three EQ clusters. What was a single unbundle node in LabVIEW is now four property nodes in NXG.
 
-| [![NXG classes also need a lot of property nodes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Class-Property-Compare.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Class-Property-Compare.png) |
+| [![NXG class cluster combos also need more property nodes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Class-Property-Compare.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Class-Property-Compare.png) |
 |:--:|
-| *NXG classes also need a lot of property nodes.* |
+| *NXG class cluster combos also need more property nodes.* |
 
-While this property node nitpick doesn't affect functionality, all of these extra property nodes add to the diagram space. I really hope direct access to nested properties is coming in a future version of LabVIEW NXG, otherwise I'll have to seriously consider getting one of these monitors.
+One could/should use In Place Element structures (IPEs) in these cases, but they can be additional diagram bloat if performance or memory safety isn't a concern. NXG's IPEs even more so, they're enormous.
 
-| [![This was joke, NXG, not a suggestion!]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/ultrawide.jpg)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/ultrawide.jpg) |
+| [![Those hotdog terminals...]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/IPE-Compare.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/IPE-Compare.png) |
 |:--:|
-| *This was joke, NXG, not a suggestion!* |
+| *Those hotdog terminals...* |
 
-(One could/should use IPEs, but they are additional diagram bloat if performance or memory safety isn't a concern. NXG's IPEs even more so, they're enormous.)
+While this property node nitpick doesn't affect functionality, all of these extra property nodes quickly add up to a larger block diagram. I really hope direct access to nested properties is coming in a future version of LabVIEW NXG, otherwise I'll have to seriously consider getting one of these monitors.
+
+| [![This was a joke, NXG, not a suggestion!]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/ultrawide.jpg)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/ultrawide.jpg) |
+|:--:|
+| *This was a joke, NXG, not a suggestion!* |
 
 ## The Event Structure
 
