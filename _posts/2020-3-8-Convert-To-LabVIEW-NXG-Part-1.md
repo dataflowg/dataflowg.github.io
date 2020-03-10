@@ -31,13 +31,13 @@ Interesting tooltip - is 5335 really the recommended connector pane size in NXG?
 
 [![Setting to enlarge VI connector panes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png)
 
-The LabVIEW project file was added for conversion, and the preview indicated no errors or missing files. After a couple of minutes the conversion completed (without crashing or hanging I hasten to add, which was a problem in previous NXG versions). The converted project is then immediately opened, so it looks like it worked. Time to check the conversion report.
+The LabVIEW project file was added for conversion, and the preview indicated no errors or missing files. After a couple of minutes the conversion completed (without crashing or hanging I hasten to add, which was a problem in previous NXG versions). The converted project is then automatically opened, so it looks everything worked. Time to check the conversion report.
 
 [![Setting to enlarge VI connector panes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png)
 
 ## Code Conversion Errors
 
-It didn't take long to find the first show stopper - the main DJ Interface VI failed to convert. At this point it would've been nice if the conversion utility highlighted files which failed to convert, rather than needing to dig into the conversion report. There are filtering tools available for looking through the conversion report, so finding failures is easy enough (but one still has to go looking). In this case the report highlights an EventDataNode, and a potentially corrupt VI. The VI certainly isn't corrupt, so it's probably the event structure or event registration node in that VI. Time to fire up LabVIEW.
+It didn't take long to find the first show stopper - the main DJ Interface VI failed to convert. At this point it would've been nice if the conversion utility explicitly mentioned that files had failed to convert, rather than needing to dig into the conversion report. There are filters for looking through the conversion report, so finding failures is easy enough (but one still has to go looking). In this case the report highlights an EventDataNode, and a potentially corrupt VI. The VI certainly isn't corrupt, so it's probably the event structure or event registration node in that VI. Time to fire up LabVIEW.
 
 [![Conversion report output.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Conversion-Report.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Conversion-Report.png)
 
@@ -145,7 +145,7 @@ For a VI to be inserted into a panel container, it needs to be in a running stat
 
 [![Both methods work in LabVIEW, but only Run VI works in NXG.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Subpanels-PanelContainers.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Subpanels-PanelContainers.png)
 
-This had me stumped for a while, and I'm still unclear as to why one method works and the other doesn't (maybe different thread pools?). The original LabVIEW code opens a VI reference with the async flag (0x80) and uses the asynchronous call VIs to start the VI running. The converted NXG code can successfully run the VIs using this same method, but the panel container was insistent the VI wasn't running and refused to load the VI into the panel container (error 1690).
+This had me scratching my head for a while, and I'm still unclear as to why one method works and the other doesn't (maybe different thread pools?). The original LabVIEW code opens a VI reference with the async flag (0x80) and uses the asynchronous call VIs to start the VI running. The converted NXG code can successfully run the VIs using this same method, but the panel container was insistent the VI wasn't running and refused to load the VI into the panel container (error 1690).
 
 If I opened the NXG VI after it had been started asynchronously, it was definitely running. Querying the Execution State property of the VI reference showed it was running. So in a final act of desperation I replaced the asynchronous call with the Run VI node and... it worked. The documentation for panel containers is a little sparse - it only states a VI has to be running for it to be placed in the panel container, and nothing on how the VI should be started. Further, there are no examples which show the 'right' way to use panel containers.
 
