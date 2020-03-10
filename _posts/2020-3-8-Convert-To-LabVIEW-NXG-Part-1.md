@@ -151,6 +151,6 @@ If I opened the NXG VI after it had been started asynchronously, it was definite
 
 # Part 1 Conclusion
 
-The LabVIEW 20xx to LabVIEW NXG code conversion was actually fairly painless (save for the event structure issue). The most difficult part of the conversion was in working around (or at least understanding) the shortcomings of NXG itself. It's still young(-ish) and under constant development, so I expect those pain points to go away in future versions.
+The LabVIEW 20xx to LabVIEW NXG code conversion was actually fairly painless (save for the event structure issue). The most difficult part of the conversion was in working around (or at least understanding) the shortcomings of NXG itself. It's still young(-ish) and under constant development, so I <del>expect</del> hope those pain points will be addressed in future versions.
 
 Part 2 will cover performance optimizations, unicode workarounds, general debugging, and the Shared Library Interface (ugh). Stay tuned!
