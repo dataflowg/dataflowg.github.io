@@ -147,7 +147,7 @@ For a VI to be inserted into a panel container, it needs to be in a running stat
 
 This had me scratching my head for a while, and I'm still unclear as to why one method works and the other doesn't (maybe different thread pools?). The original LabVIEW code opens a VI reference with the async flag (0x80) and uses the asynchronous call VIs to start the VI running. The converted NXG code can successfully run the VIs using this same method, but the panel container was insistent the VI wasn't running and refused to load the VI into the panel container (error 1690).
 
-If I opened the NXG VI after it had been started asynchronously, it was definitely running. Querying the Execution State property of the VI reference showed it was running. So in a final act of desperation I replaced the asynchronous call with the Run VI node and... it worked. The documentation for panel containers is a little sparse - it only states a VI has to be running for it to be placed in the panel container, and nothing on how the VI should be started. Further, there are no examples which show the 'right' way to use panel containers.
+If I opened the NXG VI after it had been started asynchronously, it was definitely running. Querying the Execution State property of the VI reference showed it was running. So in a final act of desperation I replaced the asynchronous call with the Run VI node and... it worked. The documentation for panel containers is a [little sparse](https://twitter.com/Dataflow_G/status/1224526590589071362) - it only states a VI has to be running for it to be placed in the panel container, and nothing on how the VI should be started. Further, there are no examples which show the 'right' way to use panel containers.
 
 # Part 1 Conclusion
 
