@@ -110,11 +110,6 @@ img {
   max-width: 100%;
 }
 
-img + em {
-  display: block;
-  text-align: center;
-}
-
 // Fixes images in popup boxes from Google Translate
 .gmnoprint img {
   max-width: none;
@@ -292,3 +287,8 @@ footer {
 // ... Otherwise it really bloats up the top of the CSS file and makes it difficult to find the start
 @import "highlights";
 @import "svg-icons";
+
+img + em {
+  display: block;
+  text-align: center;
+}

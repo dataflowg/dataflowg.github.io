@@ -21,6 +21,7 @@ The knew the UI probably wouldn't port nicely, so the focus was on achieving bas
 Here's a quick look at the project under LabVIEW 2019. A few classes, a few libraries, some loose VIs and controls, and a top level VI. It's all pure LabVIEW, save for some DLL calls to load MP3s. The project is self contained, with no dependencies beyond vi.lib.
 
 [![Dataflow DJ LabVIEW project.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ-Project.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ-Project.png)
+*Dataflow DJ LabVIEW project.*
 
 # Code Conversion
 
