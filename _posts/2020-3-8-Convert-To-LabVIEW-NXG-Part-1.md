@@ -14,6 +14,7 @@ The source code for the original [LabVIEW project](https://github.com/dataflowg/
 The plan was to convert the first release of [Dataflow DJ](https://github.com/dataflowg/dataflow-dj) to LabVIEW NXG 4.0, the goal being playback of two tracks with some simple mixing. This project was chosen as it's relatively small, though complex enough to test a range of features (subpanels, classes, sound output, DVRs, DLLs, signal processing, etc). It's also quite demanding in terms of CPU, so would be a good test of NXG's run-time performance.
 
 [![Version 0.1 of Dataflow DJ.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png)
+*Version 0.1 of Dataflow DJ.*
 
 The knew the UI probably wouldn't port nicely, so the focus was on achieving basic functionality. I did briefly consider trying to port the latest Dataflow DJ release, but it's split across multiple projects, with multiple static and dynamic PPLs. That was painful enough to implement in LabVIEW - I wasn't even going to attempt it in NXG!
 
