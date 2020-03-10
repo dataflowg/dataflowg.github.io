@@ -3,7 +3,7 @@ layout: post
 title: Let's Convert A LabVIEW Project to LabVIEW NXG! (Part 1)
 ---
 
-![Let's convert!]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/title.png)
+![Let's convert!]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/title.jpg)
 
 This is the first of a two-part blog documenting the experience of converting a small/medium sized LabVIEW project to LabVIEW NXG.
 
@@ -13,7 +13,7 @@ The source code for the original [LabVIEW project](https://github.com/dataflowg/
 
 The plan was to convert the first release of [Dataflow DJ](https://github.com/dataflowg/dataflow-dj) to LabVIEW NXG 4.0, the goal being playback of two tracks with some simple mixing. This project was chosen as it's relatively small, though complex enough to test a range of features (subpanels, classes, sound output, DVRs, DLLs, signal processing, etc). It's also quite demanding in terms of CPU, so would be a good test of NXG's run-time performance.
 
-| [![Version 0.1 of Dataflow DJ.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png) |
+| [![Version 0.1 of Dataflow DJ.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ.png) |
 |:--:|
 | *Version 0.1 of Dataflow DJ.* |
 
@@ -21,7 +21,7 @@ I knew the UI probably wouldn't port nicely, so the focus was on achieving basic
 
 Here's a quick look at the project under LabVIEW 2019. A few classes, a few libraries, some loose VIs and controls, and a top level VI. It's all pure LabVIEW, save for some DLL calls to load MP3s. The project is self contained, with no dependencies beyond vi.lib.
 
-| [![Dataflow DJ LabVIEW project.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ-Project.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ-Project.png) |
+| [![Dataflow DJ LabVIEW project.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ-Project.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-DataflowDJ-Project.png) |
 |:--:|
 | *Dataflow DJ LabVIEW project.* |
 
@@ -29,19 +29,19 @@ Here's a quick look at the project under LabVIEW 2019. A few classes, a few libr
 
 First step is the Code Conversion Utility. There's some conversion options which can be set, but I stuck with the defaults for this experiment. The *Convert files referenced from vi.lib* option would've helped with some missing sound VIs that we'll run into later, but I wanted to see how far things went with the vanilla configuration.
 
-| [![Code Conversion Utility settings page.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings.png) |
+| [![Code Conversion Utility settings page.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/CCU-Settings.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/CCU-Settings.png) |
 |:--:|
 | *Code Conversion Utility settings page.* |
 
 Interesting tooltip - is 5335 really the recommended connector pane size in NXG? New NXG VIs all have the 4224 pattern by default. Presumably this is the recommendation for instrument drivers, which would be a common conversion utility use case.
 
-| [![Setting to enlarge VI connector panes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png) |
+| [![Setting to enlarge VI connector panes.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/CCU-Settings-5335.png) |
 |:--:|
 | *Setting to enlarge VI connector panes.* |
 
 The LabVIEW project file was added for conversion, and the preview indicated no errors or missing files. After a couple of minutes the conversion completed (without crashing or hanging I hasten to add, which was a problem in previous NXG versions). The converted project is then automatically opened, so it appears everything worked. Time to check the conversion report.
 
-| [![Conversion Utility preview.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png) |
+| [![Conversion Utility preview.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/CCU-Preview.png) |
 |:--:|
 | *Conversion Utility preview.* |
 
@@ -49,7 +49,7 @@ The LabVIEW project file was added for conversion, and the preview indicated no 
 
 It didn't take long to find the first show stopper - the main DJ Interface VI failed to convert. At this point it would've been nice if the conversion utility explicitly mentioned that files had failed to convert, rather than needing to dig into the conversion report. There are filters for looking through the conversion report, so finding failures is easy enough (but one still has to go looking). In this case the report highlights an EventDataNode, and a potentially corrupt VI. The VI certainly isn't corrupt, so it's probably the event structure or event registration node in that VI. Time to fire up LabVIEW.
 
-| [![Conversion report output.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Conversion-Report.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Conversion-Report.png) |
+| [![Conversion report output.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/NXG-Conversion-Report.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/NXG-Conversion-Report.png) |
 |:--:|
 | *Conversion report output.* |
 
@@ -57,7 +57,7 @@ The process for narrowing down the fault was the usual 'remove code until works,
 
 After a slow process of elimination, the root cause of the conversion error is dynamically registered filter events (Key Down?, Panel Close?, etc). This VI snippet highlights the problem. If those dynamically registered filter events are removed from the event structure, the VI converts successfully.
 
-| [![LabVIEW 2019 snippet which will fail to convert to LabVIEW NXG.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-Dynamic-Filter-Event-Reg-Snippet.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-Dynamic-Filter-Event-Reg-Snippet.png) |
+| [![LabVIEW 2019 snippet which will fail to convert to LabVIEW NXG.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-Dynamic-Filter-Event-Reg-Snippet.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-Dynamic-Filter-Event-Reg-Snippet.png) |
 |:--:|
 | *LabVIEW 2019 snippet which will fail to convert to LabVIEW NXG.* |
 
@@ -67,7 +67,7 @@ One issue the conversion utility dealt with was circular dependencies between li
 
 By the way you can view circular dependencies in LabVIEW using the VI Hierarchy view. The links appear as curved wires connecting the offending VIs/libraries.
 
-| [![Oh no! Circular dependencies!]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-VI-Hierarchy.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-VI-Hierarchy.png) |
+| [![Oh no! Circular dependencies!]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-VI-Hierarchy.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-VI-Hierarchy.png) |
 |:--:|
 | *Oh no! Circular dependencies!* |
 
@@ -77,7 +77,7 @@ With that erroneous VI fixed, all project files are now present and accounted fo
 
 Before diving in, I was curious to see how well the main interface converted. It's not terrible! (though suffers a [knob shrinkage](https://twitter.com/Dataflow_G/status/1060542351528013824) problem)
 
-| [![The initial DJ Interface UI conversion.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-DJ-Interface.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-DJ-Interface.png) |
+| [![The initial DJ Interface UI conversion.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/NXG-DJ-Interface.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/NXG-DJ-Interface.png) |
 |:--:|
 | *The initial DJ Interface UI conversion.* |
 
@@ -91,7 +91,7 @@ Then came the more subtle differences I wasn't expecting. Unbundle label text fr
 
 One of these reference types is a NumericTextBox. The other is a NumericTextBox. See the difference? Maybe the context help gives a clue? What about the item tab on the configuration pane? Everything indicates they're both a NumericTextBox. They must be the same then! So why does only one of them have a subset of properties?
 
-| [![Two NumericTextBox references, but only one has all the properties.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Reference-Compare.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Reference-Compare.png) |
+| [![Two NumericTextBox references, but only one has all the properties.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/NXG-Reference-Compare.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/NXG-Reference-Compare.png) |
 |:--:|
 | *Two NumericTextBox references, but only one has all the properties.* |
 
@@ -105,13 +105,13 @@ This is something I can *kinda* understand on a behind the scenes level, but for
 
 Following on from the reference type peculiarities above, I ran into further problems accessing the value property. This time from control references that actually *have* a numeric type. Here's a simplified example of the problem. There are references to two control types, a NumericTextBox (Numeric) and a Slider (Slider). Both have a double type, and so both have a value property. The build array function implicitly type casts both reference types to their nearest ancestor, the Numeric class. The problem here is this cast strips the numeric type, so it's now a typeless Numeric and not a double Numeric. So we lose access to the Value property (without converting back to the correct control + numeric type reference).
 
-| [![Different control references with a double type, cast to a more general Numeric lose the Value property.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Reference-Value-Property-Missing.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Reference-Value-Property-Missing.png) |
+| [![Different control references with a double type, cast to a more general Numeric lose the Value property.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/NXG-Reference-Value-Property-Missing.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/NXG-Reference-Value-Property-Missing.png) |
 |:--:|
 | *Different control references with a double type, cast to a more general Numeric lose the Value property.* |
 
 In Dataflow DJ, references to every UI control are stored in a variant attribute style map, and accessed when a value change message is received from the audio engine (e.g. *Deck1.PlaybackPosition*). The original LabVIEW code handling UI updates receives the value change message, reads the corresponding control reference out of the variant attribute map, then writes the new value to the the Value property of that control. This method can handle a whole range of controls and data types (sliders, knobs, waveforms, strings).
 
-| [![The Value property in LabVIEW works regardless of the control reference type.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-Reference-Value-Write.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-Reference-Value-Write.png) |
+| [![The Value property in LabVIEW works regardless of the control reference type.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-Reference-Value-Write.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-Reference-Value-Write.png) |
 |:--:|
 | *The Value property in LabVIEW works regardless of the control reference type.* |
 
@@ -123,25 +123,25 @@ I did manage to find a workaround in the form of `Set Control Value`, which writ
 
 OK, so not a lot of properties are supported. For those which do exist, specifically reference types, multiple property nodes are required. Take the contrived example below. If one wants to set all of the scale minimums of an intensity plot to 0 (leaving the maximum untouched), this is the (only?) way it can be done in NXG. Every reference type requires a new property node to access its properties. The equivalent LabVIEW code is a single property node with three inputs - which is much more concise and readable IMO.
 
-| [![NXG references need a lot of property nodes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Intensity-Graph-Property-Compare.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Intensity-Graph-Property-Compare.png) |
+| [![NXG references need a lot of property nodes.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/Intensity-Graph-Property-Compare.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/Intensity-Graph-Property-Compare.png) |
 |:--:|
 | *NXG references need more property nodes.* |
 
 This property node requirement extends to class members. If a class contains a cluster, elements of that cluster can not be directly accessed from a property node on the class wire. Instead the cluster needs to be unbundled, and a second property node used to access the elements. In this example the Channel class contains three EQ clusters. What was a single unbundle node in LabVIEW is now four property nodes in NXG.
 
-| [![NXG class cluster combos also need more property nodes.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Class-Property-Compare.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Class-Property-Compare.png) |
+| [![NXG class cluster combos also need more property nodes.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/Class-Property-Compare.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/Class-Property-Compare.png) |
 |:--:|
 | *NXG class cluster combos also need more property nodes.* |
 
 One could/should use In Place Element structures (IPEs) in these cases, but they can be additional diagram bloat if performance or memory safety isn't a concern. NXG's IPEs even more so, they're enormous.
 
-| [![Those hotdog terminals...]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/IPE-Compare.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/IPE-Compare.png) |
+| [![Those hotdog terminals...]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/IPE-Compare.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/IPE-Compare.png) |
 |:--:|
 | *Those hotdog terminals...* |
 
 While this property node nitpick doesn't affect functionality, all of these extra property nodes quickly add up to a larger block diagram. I really hope direct access to nested properties is coming in a future version of LabVIEW NXG, otherwise I'll have to seriously consider getting one of these monitors.
 
-| [![This was a joke, NXG, not a suggestion!]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/ultrawide.jpg)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/ultrawide.jpg) |
+| [![This was a joke, NXG, not a suggestion!]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/ultrawide.jpg)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/ultrawide.jpg) |
 |:--:|
 | *This was a joke, NXG, not a suggestion!* |
 
@@ -149,13 +149,13 @@ While this property node nitpick doesn't affect functionality, all of these extr
 
 The event structure provided a few interesting quirks. Dynamic registration for control references is out, so the once simple registration of an array of UI control references became a tedious effort in manually configuring 50+ event sources across several event cases. Also one can't have a single event case registered for multiple Mouse Down? filter events from different control types, or even from the *same* control types with different data types. So there's a bit of [WET](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself#DRY_vs_WET_solutions) going on when configuring events.
 
-| [![The NXG event configuration dialog.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Event-Config.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/NXG-Event-Config.png) |
+| [![The NXG event configuration dialog.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/NXG-Event-Config.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/NXG-Event-Config.png) |
 |:--:|
 | *The NXG event configuration dialog.* |
 
 And that event config dialog is too damned small. I can only view a few event sources and configured events at once (and the dialog in the picture has been resized to its maximum, the default is even *smaller*). This dialog is somehow worse than the original event configuration dialog in LabVIEW (which was thankfully overhauled). Here's hoping the NXG event config dialog sees a similar overhaul.
 
-| [![The old but less worse LabVIEW event configuration dialog.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-Event-Config-Old.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/LV-Event-Config-Old.png) |
+| [![The old but less worse LabVIEW event configuration dialog.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-Event-Config-Old.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/LV-Event-Config-Old.png) |
 |:--:|
 | *The old but less worse LabVIEW event configuration dialog.* |
 
@@ -183,7 +183,7 @@ I was hoping the Code Conversion Utility would perform a 1:1 replacement of subp
 
 For a VI to be inserted into a panel container, it needs to be in a running state. There are two common ways to start a VI asynchronously - `Run VI` and `Start Asynchronous Call`. Both of these methods return a VI reference, which can then be wired up to the insert method for a subpanel in LabVIEW, or a panel container in NXG. Both of these methods work for LabVIEW subpanels, but only one of these methods works with a panel container in LabVIEW NXG. Guess which one I used in Dataflow DJ?
 
-| [![Both methods work in LabVIEW, but only Run VI works in NXG.]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Subpanels-PanelContainers.png)]({{ site.baseurl }}/images/Convert-To-LabVIEW-NXG-Part-1/Subpanels-PanelContainers.png) |
+| [![Both methods work in LabVIEW, but only Run VI works in NXG.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/Subpanels-PanelContainers.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-1/Subpanels-PanelContainers.png) |
 |:--:|
 | *Both methods work in LabVIEW, but only Run VI works in NXG.* |
 
