@@ -67,7 +67,7 @@ Before diving in, I was curious to see how well the main interface converted. It
 
 The process of fixing the conversion errors was slow to start, as I was still learning what LabVIEW NXG 4.0 was and wasn't capable of. Drag and drop? Nope. Dynamic events from control references? Nope. Execution systems? Nope.
 
-Then came the more subtle differences I wasn't expecting. Unbundle caption text from a control reference? That needs two property nodes now. Bundle a cluster element on a class wire? That needs three property nodes. Why is the knob control bounding box so much bigger than the graphic? Hang on, no *Value* property!? What was going on?
+Then came the more subtle differences I wasn't expecting. Unbundle label text from a control reference? That needs two property nodes now. Bundle a cluster element on a class wire? That needs three property nodes. Why is the knob control bounding box so much bigger than the knob itself? Hang on, no *Value* property!? What was going on?
 
 ## All References Are Equal, But Some References Are More Equal Than Others
 
