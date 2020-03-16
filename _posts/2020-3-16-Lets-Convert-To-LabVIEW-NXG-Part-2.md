@@ -33,7 +33,7 @@ Well, it's a start.
 > *"Hold my beer."*
 >    - LabVIEW NXG
 
-It's no secret that using LabVIEW NXG is slow. The minute long splash screen, the slow to respond mouse clicks, even the dependency check NXG performs before the run arrow can be clicked. But what about run-time performance? How does it compare to LabVIEW?
+It's no secret that using LabVIEW NXG is slow. The minute long splash screen, the sluggish response to mouse clicks, even the dependency check NXG performs before the run arrow can be clicked. But what about run-time performance? How does it compare to LabVIEW?
 
 It would be useful to try quantify the performance difference with LabVIEW 20xx before attempting any optimization. As a quick baseline, here's the CPU utilization of Dataflow DJ running under LabVIEW 2019, and under LabVIEW NXG 4.0. Both were run on the same Windows 10 virtual machine (though not at the same time). In both cases a single track is playing on deck 1 and no other audio effects active. Both are being run from the development environment, with debugging enabled on all VIs (where not inlined).
 
@@ -52,9 +52,9 @@ Where is all that CPU time going exactly?
 
 ### Performance Tweak 1 - UI Updates
 
-The interface in Dataflow DJ isn't typical of many LabVIEW applications, and has continuous rapid updates to multiple controls. These updates occur at a rate of **output sample rate / buffer size**, which in this case is 44100/1024, or 43Hz). This rate is in contrast to a typical process control or test system which might display updates at a leisurely 1Hz-5Hz. I had a hunch this is where the CPU usage was going in LabVIEW NXG.
+The interface in Dataflow DJ isn't typical of many LabVIEW applications, and has continuous rapid updates to multiple controls. These updates occur at a rate of **output sample rate / buffer size**, which in this case is 44100/1024, or 43Hz. This rate is in contrast to a typical process control or test system which might display updates at a leisurely 1Hz-5Hz. I had a hunch this is where the CPU usage was going in LabVIEW NXG.
 
-To test this, writes were disabled to all controls in the UI update loop. The 60% CPU usage was *halved*.
+To test this, writes were disabled to all controls in the UI update loop. The CPU usage was *halved*.
 
 | [![This disabled code nets a 50% drop in CPU!]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-UI-Updates-Disabled.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-UI-Updates-Disabled.png) |
 |:--:|
@@ -62,25 +62,33 @@ To test this, writes were disabled to all controls in the UI update loop. The 60
 
 You may recall in [Part 1]({{ site.baseurl }}/Lets-Convert-To-LabVIEW-NXG-Part-1) of this blog that the control update method was changed in NXG from Value property writes to the `Set Control Value` method. Maybe this was to blame?
 
-When a single deck is playing a track, there are five controls which are constantly updated - the jog wheel knob, playback position slider, time remaining string, and two level indicator sliders. The `Set Control Value` VI was substituted with writes directly to each of these control's <del>local variables</del> duplicate terminals. In theory this should be the fastest way to update a control (at least it is in LabVIEW 20xx, compared to writing the Value property). After making the changes the application is run again, but the CPU was back up to 60%. So it appears `Set Control Value` isn't responsible for the big CPU jump. At this point it looks like it's the actual control / front panel redraw which is so processor hungry.
+When a single deck is playing a track, there are five controls which are constantly updated - the jog wheel knob, playback position slider, time remaining string, and two level indicator sliders. To test potential performance overhead from `Set Control Value`, it was replaced with direct writes to each those control's <del>local variables</del> duplicate terminals. In theory this should be the fastest way to update a control. After making the changes the application is run again, but the CPU was back up to 60%.
+
+So it appears `Set Control Value` isn't responsible for the big CPU jump. At this point it looks like it's the actual control / front panel redraw which is so processor hungry.
 
 If the update rate for that set of controls is reduced from 43Hz to a very choppy 5Hz, the CPU usage drops to around 40% for single deck playback. If playback is started on the second deck, there's no longer an immediate buffer underflow. Unfortunately this hasn't helped with the quality of the audio. As soon as the second deck starts playing, audio is a glitchy mess, and if left playing too long a buffer underflow eventually occurs.
 
 ### Performance Tweak 2 - Audio Buffer
 
-The other immediately obvious way to reduce CPU and achieve reasonable playback quality is to increase the audio buffer size. This means the CPU doesn't have to work as hard to keep the output buffer filled, but has the knock on effect of increasing input lag. I wanted to avoid this if at all possible, as it's not ideal for an application where reaction time is critical!
+Another way to reduce CPU and achieve reasonable playback quality is to increase the audio buffer size. This means the CPU doesn't have to work as hard to keep the output buffer filled, but has the knock on effect of increasing input lag. I wanted to avoid this if at all possible, as it's not ideal for an application where reaction time is critical!
 
 The sample buffer size was doubled from 1024 to 2048 samples, which dropped the CPU from 40% down to about 30% when playing one deck. Testing playback on the second deck starts out fine, but after several seconds persistent drop out glitches creep in. Going to a slightly larger buffer size of 3072 mostly eliminates the audio glitches, and seems to prevent complete buffer underflows. With this buffer size and two decks playing, the CPU is around 55%.
 
 ### Performance Tweak 3 - Timed Loop (Ab)Use
 
-NXG doesn't have explicit Execution Systems (VIs running in different thread pools at different priorities), but one can produce a similar result using Timed Loops, by forcibly running sections of code on dedicated CPU cores. There are three main Execution Systems used by Dataflow DJ - audio output (time critical instrument I/O), audio processing (above normal data acquisition), and UI updates (normal priority user interface). If these three sections of code are wrapped in Timed Loops of different priorities and on different CPU cores, we can approximate LabVIEW 20xx's Execution System.
+NXG doesn't have explicit Execution Systems (VIs running in different thread pools at different priorities), but one can produce a similar result using Timed Loops, by forcibly running sections of code on dedicated CPU cores. There are three main Execution Systems used by Dataflow DJ - time critical instrument I/O (audio output), above normal data acquisition (audio processing), and normal priority user interface (UI updates). If the while loops around each of these components are replaced with Timed Loops of different priorities and on different CPU cores, we can approximate LabVIEW 20xx's Execution System.
 
-**NOTE: It's not a good idea to use Timed Loops in this way. This should be considered a last resort workaround.**
+**NOTE: It's not a good idea to use Timed Loops in this way. This should be considered a last resort.**
 
-First step is to replace the regular While Loops with Timed Loops. Simply right-click the loop and select replace with Timed Loop... is how I would have done it in LabVIEW. Instead NXG only offers a replace with For Loop option (\*sigh\*). Replacing the While Loop means removing it, creating a new Timed Loop, rewiring all the inputs and outputs, fixing up shift registers, and changing the stop terminal from *Run infinitely* to *Stop if true*.
+First step is to replace the regular While Loops with Timed Loops. Simply right-click the while loop and select *Replace with Timed Loop*...
 
-Using Timed Loops in this way means we don't really care about the timed aspect. This project's audio pipeline is timed by the audio device output, where each of the other loops in the system slaves from the output loop. For the new Timed Loops, the *mode* is set to *Process missed periods, ignore original phase*. We definitely want to process every period (else there will be audio glitches due to missing audio blocks), while the phase is ignored because the loop is being timed by the output device. The loop period doesn't matter too much, just so long as it's faster than the audio output device timing.
+| [![Oh.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-No-Replace.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-No-Replace.png) |
+|:--:|
+| *Oh.* |
+
+...is how I would have done it in LabVIEW. Instead NXG only offers a replace with For Loop option (\*sigh\*). Replacing the While Loop requires removing it, creating a new Timed Loop, rewiring all the inputs and outputs, fixing up shift registers, and changing the stop terminal from *Run infinitely* to *Stop if true*.
+
+Using Timed Loops in this manner means the actual timing aspect of the loop is secondary. The project's audio pipeline controls the timing via the audio device output, where each of the other loops in the system slaves from the output loop. For the new Timed Loops, the *mode* is set to *Process missed periods, ignore original phase*. We definitely want to process every period (else there will be audio glitches due to missing audio blocks), while the phase is ignored because the loop is being timed by the output device. The loop period doesn't matter too much, just so long as it's faster than the audio output device timing.
 
 | [![Timed Loop configuration for Audio Processing loop.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-Timed-Loop-Config.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-Timed-Loop-Config.png) |
 |:--:|
@@ -158,17 +166,17 @@ Anyway it seems this is no longer a problem in NXG. Yay!
 
 One NXG feature I had almost forgotten about was Unicode support and UTF-8 encoded strings. As a quick test I ran Dataflow DJ NXG and pointed it to a folder with a bunch of filenames containing Unicode, and up popped a correctly rendered list of non-English characters. Great! Now I can add a little [*LADYBABY - ニッポン饅頭*](https://www.youtube.com/watch?v=M8-vje-bq9c) to my mixes! Wait, what's that? The lvsound2 DLL wasn't updated to support Unicode? Ah well, I'll do it myself.
 
-| [![No Unicode WAVs for you.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-File-Error.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-File-Error.png) |
+| [![\*Slams counter\* No Unicode WAVs for you!]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-File-Error.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-File-Error.png) |
 |:--:|
-| *No Unicode WAVs for you.* |
+| *\*Slams counter\* No Unicode WAVs for you!* |
 
-I loaded up the audio decoder DLL from the [latest version of Dataflow DJ](https://github.com/dataflowg/dataflow-dj/releases/tag/v0.2.0), which uses its own WAV decoder separate to LabVIEW's WAV functions (courtesy of [dr_wav](https://github.com/mackron/dr_libs/blob/master/dr_wav.h)). Now I haven't done a lot with different Unicode string encodings in C/C++, so was winging it a bit here. Windows' Unicode support uses UTF-16 LE (little endian) encoded strings which are of the type `wchar_t`, which is a 16-bit wide character. Most Win32 file APIs have a *wide* variant which accepts these string types. So the simplest solution was to replace any file opening functions in the DLL with their wide counterpart, and update the exported DLL functions to use `wchar_t *` string paths rather than `char *` string paths.
+I loaded up the audio decoder DLL from the [latest version of Dataflow DJ](https://github.com/dataflowg/dataflow-dj/releases/tag/v0.2.0), which uses its own WAV decoder separate to LabVIEW's WAV functions (courtesy of [dr_wav](https://github.com/mackron/dr_libs/blob/master/dr_wav.h)). Now I haven't done a lot with different Unicode string encodings in C/C++, so was winging it a bit here. Windows' Unicode support uses UTF-16 LE (little endian) encoded strings which are of the type `wchar_t`, which is a 16-bit wide character. Most Win32 file APIs have a *wide* variant which accepts these string types. So the simplest solution was to replace any file opening functions in the DLL with their wide counterpart, and update the exported DLL functions to use `wchar_t*` string paths rather than `char*` string paths.
 
-| [![char \* and wchar_t \* WAV variants.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-Code.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-Code.png) |
+| [![char\* and wchar_t\* WAV variants.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-Code.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-Code.png) |
 |:--:|
-| *char \* and wchar_t \* WAV variants.* |
+| *char\* and wchar_t\* WAV variants.* |
 
-Back in LabVIEW NXG the DLL function parameters were updated by replacing string parameters with an array of U16s. When calling the function the file path is converted to a string. It is then passed through NXG's `String to Byte Array` which includes an option to output a U8 byte array with a UTF-16 encoding (so every pair of array elements comprises a single character). This is fine, though the byte order is big endian (LabVIEW's native endianness) and Windows needs little endian. After a type cast from a U8 array to a U16 array and some byte swapping, the array is now in a `wchar_t *`, UTF-16 LE compatible representation ready for the underlying Windows APIs. Passing this array to the updated DLL works, and audio files with Unicode filenames are now supported.
+Back in LabVIEW NXG the DLL function parameters were updated by replacing string parameters with an array of U16s. When calling the function the file path is converted to a string. It is then passed through NXG's `String to Byte Array` which includes an option to output a U8 byte array with a UTF-16 encoding (so every pair of array elements comprises a single character). This is fine, though the byte order is big endian (LabVIEW's native endianness) and Windows needs little endian. After a type cast from a U8 array to a U16 array and some byte swapping, the array is now in a `wchar_t*`, UTF-16 LE compatible representation ready for the underlying Windows APIs. Passing this array to the updated DLL works, and audio files with Unicode filenames are now supported.
 
 | [![UTF-8 to UTF-16 LE.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-UTF-16-LE.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-UTF-16-LE.png) |
 |:--:|
@@ -213,7 +221,7 @@ Thankfully I didn't have to spend too much time with the SLI. It was easily the 
 
 # The End Result
 
-Here's the converted application in action!
+Here's the converted Dataflow DJ in action!
 
 <div style="position:relative;padding-top:56.25%;">
   <iframe src="https://www.youtube-nocookie.com/embed/_diZXav_MoA" frameborder="0" allowfullscreen
@@ -224,8 +232,8 @@ Here's the converted application in action!
 
 All said and done, was it worth the effort? As an academic exercise, yes. The result isn't spectacular, but it mostly works. I'm much more familiar with what LabVIEW NXG is capable of, but more importantly what it isn't yet capabable of. I'll definitely keep this project around to test the performance of future LabVIEW NXG versions.
 
-Beyond this exercise, do I have a use for NXG? No, or at least not for a while yet. It offers very little that LabVIEW 20xx can't already do (the big exception being webVIs). The one feature I do like is how snappy LabVIEW feels after using it!
+Beyond this exercise, do I have a need for LabVIEW NXG? No. Or at least not for a long while. It offers very little that LabVIEW 20xx does't already do (the big exception being webVIs). The one NXG feature I do like is how snappy LabVIEW feels after using it!
 
 I really wanted to highlight more good bits during this process, but the truth is they just weren't there. There was no "That's why I need to use NXG!" moment which I was hoping to find. The [latest LabVIEW NXG roadmap](https://web.archive.org/web/20200306074934/http://www.ni.com/pdf/products/us/labview-roadmap.pdf) has a few promising features slated for the next release, so it'll be interesting to test this project again with NXG 5.0.
 
-And so we end the experiment here. Thanks for reading.
+And so the experiment ends here. Thanks for reading.
