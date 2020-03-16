@@ -5,7 +5,7 @@ title: Let's Convert A LabVIEW Project to LabVIEW NXG! (Part 2)
 
 ![Let's convert!]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/title.jpg)
 
-*This is a continuation of a blog on converting a LabVIEW project to LabVIEW NXG. You can read [Part 1 here]({{ site.baseurl }}/Lets-Convert-To-LabVIEW-NXG-Part-1).*
+*This is a continuation of a blog on converting a LabVIEW project to LabVIEW NXG. You can read [Part 1 here]({{ site.baseurl }}/Lets-Convert-To-LabVIEW-NXG-Part-1/).*
 
 Part 2 begins with the code largely ported and ready to test. After all that effort, does it work? Read on for the exciting conclusion!
 
@@ -17,7 +17,7 @@ After much tinkering, UI tweaking, drag and drop workarounds, stripping out feat
 |:--:|
 | *Dataflow DJ running under NXG.* |
 
-But does it actually work? I chose a track to load on Deck 1, saw the waveform appear once it was loaded, then hit play. And... it worked. Glitch-free playback, great! Now let's load a second track, hit play and
+But does it actually work? I chose a track to load on Deck 1, the waveform appeared once it was ready, then hit play. And... it worked! Glitch-free playback, great! Now let's load a second track, hit play and
 
 | [![Buffer underflow error from the sound device.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-Buffer-Underflow.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-Buffer-Underflow.png) |
 |:--:|
@@ -60,7 +60,7 @@ To test this, writes were disabled to all controls in the UI update loop. The CP
 |:--:|
 | *This disabled code nets a 50% drop in CPU!* |
 
-You may recall in [Part 1]({{ site.baseurl }}/Lets-Convert-To-LabVIEW-NXG-Part-1) of this blog that the control update method was changed in NXG from Value property writes to the `Set Control Value` method. Maybe this was to blame?
+You may recall in [Part 1]({{ site.baseurl }}/Lets-Convert-To-LabVIEW-NXG-Part-1/) of this blog that the control update method was changed in NXG from Value property writes to the `Set Control Value` method. Maybe this was to blame?
 
 When a single deck is playing a track, there are five controls which are constantly updated - the jog wheel knob, playback position slider, time remaining string, and two level indicator sliders. To test potential performance overhead from `Set Control Value`, it was replaced with direct writes to each those control's <del>local variables</del> duplicate terminals. In theory this should be the fastest way to update a control. After making the changes the application is run again, but the CPU was back up to 60%.
 
@@ -139,7 +139,9 @@ I do wonder if some of the issues I ran into here were the result of the origina
 
 Even with the added lag and choppy interface, I was having fun playing around with the end result. Then I ran into a curious issue with the keyboard shortcuts. I'd press the Q key to begin playback on Deck 1, and it'd fire the Key Down event and send the "Play" message to Deck 1. If I then clicked and held a button on the UI, pressed a key, then released the mouse button, subsequent key presses stopped working. Clicking the VI background of the DJ interface running in the panel container fixed things, by returning focus to the that VI. "Hah, another NXG bug!" I declared to myself. Time to hunt it down.
 
-I placed some probes where the Key Down? event should be processed, and where the playback message should be received and acted on. It was then I discovered NXG's debugging is... lacking. First and foremost, where are the last update timestamps? Trying to see when events and messages are being sent and received (or if the code is even executing) without access to the last update time was surprisingly difficult. I discovered I can mouse over each probe in the Debugging window to get the timestamp, but then it's only a tooltip for a single probe, and by the time the tooltip actually appears, that timestamp value is stale. And of course the timestamp in the tooltip doesn't update while it's visible.
+I placed some probes where the Key Down? event should be processed, and where the playback message should be received and acted on. It was then I discovered NXG's debugging is... lacking.
+
+First and foremost, where are the last update timestamps? Trying to see when events and messages are being sent and received (or if the code is even executing) without access to the last update time was surprisingly difficult. I discovered I can mouse over each probe in the Debugging window to get the timestamp, but then it's only a tooltip for a single probe, and by the time the tooltip actually appears, that timestamp value is stale. And of course the timestamp in the tooltip doesn't update while it's visible.
 
 | [![A single stale timestamp.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Debug-Timestamp.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Debug-Timestamp.png)|
 |:--:|
