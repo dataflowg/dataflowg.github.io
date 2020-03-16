@@ -94,7 +94,10 @@ I did try the original 1024 sample buffer size, but was met with an immediate bu
 
 Running the code from source is great for debugging, but comes with a performance overhead. Unfortunately there was no way I could find to disable debugging on VIs in NXG. So the next best option was to build the project into an executable application. I created an Application in the project, moved Main.gvi from the My Computer library to the new application, then started a build. NXG had a long think, before declaring none of the libraries could be built.
 
-<iframe width="100%" src="https://www.youtube-nocookie.com/embed/XWWvzmhz0NI" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div style="position:relative;padding-top:56.25%;">
+  <iframe src="https://www.youtube-nocookie.com/embed/XWWvzmhz0NI" frameborder="0" allowfullscreen
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+</div>
 
 Repeating the build was quicker, and this time all of the libraries and main application compiled successfully (without any source or project changes - just like good ol' Application Builder). Running the built application was another matter, and wouldn't start due to library linkage errors.
 
