@@ -64,13 +64,13 @@ You may recall in [Part 1]({{ site.baseurl }}/Lets-Convert-To-LabVIEW-NXG-Part-1
 
 When a single deck is playing a track, there are five controls which are constantly updated - the jog wheel knob, playback position slider, time remaining string, and two level indicator sliders. The `Set Control Value` VI was substituted with writes directly to each of these control's <del>local variables</del> duplicate terminals. In theory this should be the fastest way to update a control (at least it is in LabVIEW 20xx, compared to writing the Value property). After making the changes the application is run again, but the CPU was back up to 60%. So it appears `Set Control Value` isn't responsible for the big CPU jump. At this point it looks like it's the actual control / front panel redraw which is so processor hungry.
 
-If the update rate for that set of controls is reduced from 43Hz to a very choppy 5Hz, the CPU usage drops to around 40% for single deck playback. If playback is started on the second deck, there's no longer an immediate buffer underrun. Unfortunately this hasn't helped with the quality of the audio. As soon as the second deck starts playing, audio is a glitchy mess, and if left playing too long a buffer underrun eventually occurs.
+If the update rate for that set of controls is reduced from 43Hz to a very choppy 5Hz, the CPU usage drops to around 40% for single deck playback. If playback is started on the second deck, there's no longer an immediate buffer underflow. Unfortunately this hasn't helped with the quality of the audio. As soon as the second deck starts playing, audio is a glitchy mess, and if left playing too long a buffer underflow eventually occurs.
 
 ### Performance Tweak 2 - Audio Buffer
 
 The other immediately obvious way to reduce CPU and achieve reasonable playback quality is to increase the audio buffer size. This means the CPU doesn't have to work as hard to keep the output buffer filled, but has the knock on effect of increasing input lag. I wanted to avoid this if at all possible, as it's not ideal for an application where reaction time is critical!
 
-The sample buffer size was doubled from 1024 to 2048 samples, which dropped the CPU from 40% down to about 30% when playing one deck. Testing playback on the second deck starts out fine, but after several seconds persistent drop out glitches creep in. Going to a slightly larger buffer size of 3072 mostly eliminates the audio glitches, and seems to prevent complete buffer underruns. With this buffer size and two decks playing, the CPU is around 55%.
+The sample buffer size was doubled from 1024 to 2048 samples, which dropped the CPU from 40% down to about 30% when playing one deck. Testing playback on the second deck starts out fine, but after several seconds persistent drop out glitches creep in. Going to a slightly larger buffer size of 3072 mostly eliminates the audio glitches, and seems to prevent complete buffer underflows. With this buffer size and two decks playing, the CPU is around 55%.
 
 ### Performance Tweak 3 - Timed Loop (Ab)Use
 
@@ -88,7 +88,7 @@ Using Timed Loops in this way means we don't really care about the timed aspect.
 
 After adding three Timed Loops with priorities similar to the old Execution System configuration, and each set to a dedicated CPU core, the result was better than expected. I was able to decrease the buffer size from 3072 to 2048 samples, and have the UI update at the full rate for that buffer size (44100/2048, or 21.5Hz). All of this while maintaining a CPU usage of about 45% with both decks playing. There is hope yet!
 
-I did try the original 1024 sample buffer size, but was met with an immediate buffer underrun error before anything was even played. With more tuning to synchronize loop start times and using software timed triggers, playback with the original buffer size might be possible. That said, running in this Timed Loop configuration does have one major side effect - the UI becomes very unresponsive at times, with clicks not being registered for upwards of 10 seconds.
+I did try the original 1024 sample buffer size, but was met with an immediate buffer underflow error before anything was even played. With more tuning to synchronize loop start times and using software timed triggers, playback with the original buffer size might be possible. That said, running in this Timed Loop configuration does have one major side effect - the UI becomes very unresponsive at times, with clicks not being registered for upwards of 10 seconds.
 
 ## Failure To Launch
 
