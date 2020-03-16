@@ -139,7 +139,10 @@ I placed some probes where the Key Down? event should be processed, and where th
 
 The other glaring debugging problem - there's no way to see the probe values from multiple instances of a reentrant VI *at the same time*. Adding a probe to one instance will automatically add it to all other instances, while the Debugging pane only shows the probes of the currently viewed instance. Switching between VI instances switches the probe data visible in the Debugging pane. There's also an issue where a probe placed in a reentrant VI won't begin updating until switching to a different VI and back. This short video demonstrates the issues:
 
-<iframe width="800" height="450" src="https://www.youtube-nocookie.com/embed/8Xhz8dgZW5I" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div style="position:relative;padding-top:56.25%;">
+  <iframe src="https://www.youtube-nocookie.com/embed/8Xhz8dgZW5I" frameborder="0" allowfullscreen
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+</div>
 
 Now one *can* drag the VI instance out into another window so there are two NXG windows running, and it is possible to view debug info for multiple instances that way. Problem here is the debug info is now in two (or more) places. This also means with all of NXG's window dressing, I see less of my actual code. Makes me appreciate LabVIEW's floating [Probe Watch Window](https://www.ni.com/tutorial/9385/en/).
 
@@ -161,35 +164,9 @@ One NXG feature I had almost forgotten about was Unicode support and UTF-8 encod
 
 I loaded up the audio decoder DLL from the [latest version of Dataflow DJ](https://github.com/dataflowg/dataflow-dj/releases/tag/v0.2.0), which uses its own WAV decoder separate to LabVIEW's WAV functions (courtesy of [dr_wav](https://github.com/mackron/dr_libs/blob/master/dr_wav.h)). Now I haven't done a lot with different Unicode string encodings in C/C++, so was winging it a bit here. Windows' Unicode support uses UTF-16 LE (little endian) encoded strings which are of the type `wchar_t`, which is a 16-bit wide character. Most Win32 file APIs have a *wide* variant which accepts these string types. So the simplest solution was to replace any file opening functions in the DLL with their wide counterpart, and update the exported DLL functions to use `wchar_t\*` string paths rather than `char\*` string paths.
 
-```C++
-////////////////////////////////
-// ASCII WAV decoding wrapper //
-////////////////////////////////
-extern "C" __declspec(dllexport) drwav_int16 * load_wav(const char *file_name, drwav_uint64 *num_samples, unsigned int *channels, unsigned int *sample_rate)
-{
-	drwav_int16* pSampleData = drwav_open_file_and_read_pcm_frames_s16(file_name, channels, sample_rate, num_samples, NULL);
-	if (pSampleData == NULL)
-	{
-		// Failed to open and decode WAV file.
-	}
-
-	return pSampleData;
-}
-
-/////////////////////////////////
-// UTF-16 WAV decoding wrapper //
-/////////////////////////////////
-extern "C" __declspec(dllexport) drwav_int16 * load_wav_w(const wchar_t *file_name, drwav_uint64 *num_samples, unsigned int *channels, unsigned int *sample_rate)
-{
-	drwav_int16* pSampleData = drwav_open_file_and_read_pcm_frames_s16_w(file_name, channels, sample_rate, num_samples, NULL);
-	if (pSampleData == NULL)
-	{
-		// Failed to open and decode WAV file.
-	}
-
-	return pSampleData;
-}
-```
+| [![char\* and wchar_t\* WAV variants.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-Code.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-Code.png) |
+|:--:|
+| *char\* and wchar_t\* WAV variants.* |
 
 Back in LabVIEW NXG the DLL function parameters were updated by replacing string parameters with an array of U16s. When calling the function the file path is converted to a string. It is then passed through NXG's `String to Byte Array` which includes an option to output a U8 byte array with a UTF-16 encoding (so every pair of array elements comprises a single character). This is fine, though the byte order is big endian (LabVIEW's native endianness) and Windows needs little endian. After a type cast from a U8 array to a U16 array and some byte swapping, the array is now in a `wchar_t\*`, UTF-16 LE compatible representation ready for the underlying Windows APIs. Passing this array to the updated DLL works, and audio files with Unicode filenames are now supported.
 
@@ -217,6 +194,7 @@ Snippets comparing the differences are below.
 |:--:|
 | *LabVIEW Key Down returns ASCII for space.* |
 
+
 | [![LabVIEW NXG Key Down returns Two-Byte Character for space.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-Key-Down.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-Key-Down.png) |
 |:--:|
 | *LabVIEW NXG Key Down returns Two-Byte Character for space.* |
@@ -237,7 +215,10 @@ Thankfully I didn't have to spend too much time with the SLI. It was easily the 
 
 Here's the converted application in action!
 
-<iframe width="800" height="450" src="https://www.youtube-nocookie.com/embed/_diZXav_MoA" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div style="position:relative;padding-top:56.25%;">
+  <iframe src="https://www.youtube-nocookie.com/embed/_diZXav_MoA" frameborder="0" allowfullscreen
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+</div>
 
 ## Final Thought
 
