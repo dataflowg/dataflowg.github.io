@@ -5,7 +5,7 @@ title: Let's Convert A LabVIEW Project to LabVIEW NXG! (Part 2)
 
 ![Let's convert!]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/title.jpg)
 
-*This is a continuation of a blog on converting a LabVIEW project to LabVIEW NXG. You can read [Part 1 here](https://dataflowg.github.io/Convert-To-LabVIEW-NXG-Part-1/).*
+*This is a continuation of a blog on converting a LabVIEW project to LabVIEW NXG. You can read [Part 1 here]({{ site.baseurl }}/Lets-Convert-To-LabVIEW-NXG-Part-1).*
 
 Part 2 begins with the code largely ported and ready to test. After all that effort, does it work? Read on for the exciting conclusion!
 
