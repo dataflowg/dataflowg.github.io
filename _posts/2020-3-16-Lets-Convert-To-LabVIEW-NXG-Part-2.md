@@ -13,7 +13,7 @@ Part 2 begins with the code largely ported and ready to test. After all that eff
 
 After much tinkering, UI tweaking, drag and drop workarounds, stripping out features, and fixing property bundle/unbundles, the moment finally arrived where the run arrow wasn't broken any more. Pressing Ctrl+R and seeing each interface panel pop into existence was a little exciting! I honestly thought things wouldn't get this far. It even bears a passing resemblance to the original interface.
 
-| [![Dataflow DJ running under NXG.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-DataflowDJ.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-DataflowDJ.png) |
+| [![Dataflow DJ running under NXG.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Dataflow-DJ-NXG.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Dataflow-DJ-NXG.png) |
 |:--:|
 | *Dataflow DJ running under NXG.* |
 
@@ -28,10 +28,10 @@ Well, it's a start.
 ## Performance Bassline
 
 > *"The most amazing achievement of the computer software industry is the continuing cancellation of the steady and staggering gains made by the computer hardware industry."*
->    - Henry Petroski
+>    \- Henry Petroski
 
 > *"Hold my beer."*
->    - LabVIEW NXG
+>    \- LabVIEW NXG
 
 It's no secret that using LabVIEW NXG is slow. The minute long splash screen, the slow to respond mouse clicks, even the dependency check NXG performs before the run arrow can be clicked. But what about run-time performance? How does it compare to LabVIEW?
 
