@@ -172,7 +172,7 @@ One NXG feature I had almost forgotten about was Unicode support and UTF-8 encod
 |:--:|
 | *\*Slams counter\* No Unicode WAVs for you!* |
 
-I loaded up the audio decoder DLL from the [latest version of Dataflow DJ](https://github.com/dataflowg/dataflow-dj/releases/tag/v0.2.0), which uses its own WAV decoder separate to LabVIEW's WAV functions (courtesy of [dr_wav](https://github.com/mackron/dr_libs/blob/master/dr_wav.h)). Now I haven't done a lot with different Unicode string encodings in C/C++, so was winging it a bit here. Windows' Unicode support uses UTF-16 LE (little endian) encoded strings which are of the type `wchar_t`, which is a 16-bit wide character. Most Win32 file APIs have a *wide* variant which accepts these string types. So the simplest solution was to replace any file opening functions in the DLL with their wide counterpart, and update the exported DLL functions to use `wchar_t*` string paths rather than `char*` string paths.
+I loaded up the audio decoder DLL from the [latest version of Dataflow DJ](https://github.com/dataflowg/dataflow-dj/releases/tag/v0.2.0), which uses its own WAV decoder separate to LabVIEW's WAV functions (courtesy of [dr_wav](https://github.com/mackron/dr_libs/blob/master/dr_wav.h)). Now I haven't done a lot with Unicode strings in C/C++, so was winging it a bit here. Windows' Unicode support uses UTF-16 LE (little endian) encoded strings which are of the type `wchar_t`, which is a 16-bit wide character. Most Win32 file APIs have a *wide* variant which accepts these string types. So the simplest solution was to replace any file opening functions in the DLL with their wide counterpart, and update the exported DLL functions to use `wchar_t*` string paths rather than `char*` string paths.
 
 | [![char\* and wchar_t\* WAV variants.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-Code.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/Unicode-WAV-Code.png) |
 |:--:|
@@ -202,12 +202,12 @@ Snippets comparing the differences are below.
 
 | [![LabVIEW Key Down returns ASCII for space.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/LV-Key-Down.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/LV-Key-Down.png) |
 |:--:|
-| *LabVIEW Key Down returns ASCII for space.* |
+| *LabVIEW VKey returns ASCII for space.* |
 
 
 | [![LabVIEW NXG Key Down returns Two-Byte Character for space.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-Key-Down.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/NXG-Key-Down.png) |
 |:--:|
-| *LabVIEW NXG Key Down returns Two-Byte Character for space.* |
+| *LabVIEW NXG VKey returns Two-Byte Character for space.* |
 
 ## Shared Library Interfarce
 
