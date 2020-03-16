@@ -144,11 +144,11 @@ The other glaring debugging problem - there's no way to see the probe values fro
     style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
 </div>
 
-Now one *can* drag the VI instance out into another window so there are two NXG windows running, and it is possible to view debug info for multiple instances that way. Problem here is the debug info is now in two (or more) places. This also means with all of NXG's window dressing, I see less of my actual code. Makes me appreciate LabVIEW's floating [Probe Watch Window](https://www.ni.com/tutorial/9385/en/).
+Now one *can* drag the VI instance out into another window so there are two NXG windows running, and it is possible to view debug info for multiple instances that way. Problem here is the debug info is now in two (or more) places. This also means that with all of NXG's window dressing, I see less of my actual code. Makes me appreciate LabVIEW's floating [Probe Watch Window](https://www.ni.com/tutorial/9385/en/).
 
 Despite the difficulty in debugging, I eventually tracked down the problem and found it was a bug in Dataflow DJ (more specifically a bug introduced when working around NXG's dynamic event registration shortcomings). A second keyboard shortcut handler had been added to the top level VI, but the Key Down? event wasn't being discarded, and so both the top level VI and panel container VI were processing the key press. Which meant pressing Q was starting and then immediately stopping playback. Once that Key Down? was discarded, keyboard shortcuts worked.
 
-### Keyboard Shortcut Detour 1
+#### Keyboard Shortcut Detour 1
 
 There's an issue in LabVIEW 20xx where [pressing F10 will not generate a Key Down event](https://twitter.com/Dataflow_G/status/1098805717455126528) when another control is being used with the mouse. For example clicking and dragging a volume slider, then pressing F10 to activate the Deck 2 Flanger doesn't work. What's curious is all the other function keys work.
 
@@ -182,7 +182,7 @@ Success!
 
 It would be useful if `String to Byte Array` offered both UTF-16 BE and UTF-16 LE output options, as I can see interfacing with Windows APIs being a common use case for UTF-16.
 
-### Keyboard Shortcut Detour 2
+#### Keyboard Shortcut Detour 2
 
 The Key Down events when pressing `space` or `tab` now report a VKey value of *Two-Byte Character*, whereas in LabVIEW they are both *ASCII*. I thought this might be Unicode related, but curiously all other keyboard inputs have a VKey value of *ASCII*. It's not clear why `space` and `tab` are receiving special treatment. Not a problem per se, but something to be aware of.
 
