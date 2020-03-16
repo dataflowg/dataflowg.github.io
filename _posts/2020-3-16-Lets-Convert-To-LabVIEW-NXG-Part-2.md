@@ -28,10 +28,10 @@ Well, it's a start.
 ## Performance Bassline
 
 > *"The most amazing achievement of the computer software industry is the continuing cancellation of the steady and staggering gains made by the computer hardware industry."*
->    \- Henry Petroski
+>    - Henry Petroski
 
 > *"Hold my beer."*
->    \- LabVIEW NXG
+>    - LabVIEW NXG
 
 It's no secret that using LabVIEW NXG is slow. The minute long splash screen, the slow to respond mouse clicks, even the dependency check NXG performs before the run arrow can be clicked. But what about run-time performance? How does it compare to LabVIEW?
 
@@ -40,6 +40,7 @@ It would be useful to try quantify the performance difference with LabVIEW 20xx 
 | [![LabVIEW 2019 CPU is about 25%-30%.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/CPU-LabVIEW.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/CPU-LabVIEW.png) |
 |:--:|
 | *LabVIEW 2019 CPU is about 25%-30%.* |
+
 
 | [![LabVIEW NXG 4.0 CPU is about 60%.]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/CPU-NXG.png)]({{ site.baseurl }}/images/Lets-Convert-To-LabVIEW-NXG-Part-2/CPU-NXG.png) |
 |:--:|
